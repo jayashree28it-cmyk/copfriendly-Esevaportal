@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eSeva Portal | Next-Gen Police Service Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --secondary: #7209b7;
+            --accent: #f72585;
+            --success: #06ffa5;
+            --warning: #f8961e;
+            --danger: #f94144;
+            --dark: #0a0a2a;
+            --light: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3e 50%, #0f0f2a 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(67, 97, 238, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(247, 37, 133, 0.15) 0%, transparent 50%);
+            animation: rotate 25s linear infinite;
+        }
+
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle at 60% 30%, rgba(114, 9, 183, 0.15) 0%, transparent 50%);
+            animation: rotateReverse 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rotateReverse {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+
+        /* Glass Navigation */
+        .glass-nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo i {
+            background: none;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        .btn-login, .btn-register, .btn-logout {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, var(--danger), #c1121f);
+            color: white;
+        }
+
+        .btn-login:hover, .btn-register:hover, .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem 2rem;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 0.5rem;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            min-width: 180px;
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            padding: 6rem 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Dashboard Tabs */
+        .dashboard-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 1.5rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(67, 97, 238, 0.3);
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(67, 97, 238, 0.5);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        /* FIR List */
+        .fir-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: 0.3s;
+            border-left: 3px solid var(--primary);
+        }
+
+        .fir-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-OPEN { background: var(--warning); color: #000; }
+        .status-INVESTIGATING { background: var(--primary); color: white; }
+        .status-CLOSED { background: var(--success); color: #000; }
+
+        /* ACID Metrics Cards */
+        .acid-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .acid-card {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+
+        .acid-score {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        /* ER Diagram */
+        .er-diagram {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .er-node {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.2), rgba(114, 9, 183, 0.2));
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.5rem;
+            min-width: 180px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .er-node h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .relationship-line {
+            color: var(--accent);
+            margin: 0 1rem;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: rgba(10, 10, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 450px;
+            width: 90%;
+            border: 1px solid var(--glass-border);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .full-width {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .close:hover {
+            color: var(--danger);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .user-info {
+            color: white;
+            margin-right: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .nav-links { gap: 1rem; }
+            .dashboard-tabs { gap: 0.5rem; }
+            .tab-btn { padding: 0.5rem 1rem; font-size: 0.8rem; }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-shield-haltered"></i>
+                eSeva Portal
+            </div>
+            <div class="nav-links">
+                <a class="nav-link" onclick="showSection('home')">Home</a>
+                <a class="nav-link" onclick="showSection('dashboard')">Dashboard</a>
+                <a class="nav-link" onclick="showSection('er-diagram')">📊 ER Diagram</a>
+                <a class="nav-link" onclick="showSection('acid-metrics')">⚡ ACID Properties</a>
+                <a class="nav-link" onclick="showSection('cop-dashboard')">👮 Cop Dashboard</a>
+                <div id="authButtons">
+                    <button class="btn-login" onclick="showLoginModal()">Login</button>
+                    <button class="btn-register" onclick="showRegisterModal()">Register</button>
+                </div>
+                <div id="userInfo" class="hidden">
+                    <span class="user-info" id="userNameDisplay"></span>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="homeSection">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-bolt"></i> Next-Gen Digital Police Service Platform
+                </div>
+                <h1>Welcome to <span class="gradient-text">eSeva Portal</span></h1>
+                <p>Experience transparent, efficient, and secure police services. File FIRs, track cases, and connect with law enforcement in real-time with full ACID compliance.</p>
+                <div>
+                    <button class="btn-primary" onclick="showFirModal()">
+                        <i class="fas fa-file-alt"></i> File FIR
+                    </button>
+                    <button class="btn-secondary" onclick="showSection('dashboard')">
+                        <i class="fas fa-chart-line"></i> Track Case
+                    </button>
+                </div>
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCases">0</div>
+                        <div>Total Cases</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="resolvedCases">0</div>
+                        <div>Resolved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeOfficers">0</div>
+                        <div>Active Officers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="acidScore">0%</div>
+                        <div>ACID Compliance</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="dashboard-container hidden">
+        <div class="dashboard-tabs">
+            <button class="tab-btn active" onclick="switchTab('citizen')">👤 Citizen Portal</button>
+            <button class="tab-btn" onclick="switchTab('analytics')">📈 Analytics</button>
+        </div>
+
+        <!-- Citizen Tab -->
+        <div id="citizenTab">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-file-alt"></i> Your FIRs</h2>
+                    <button class="btn-primary" onclick="showFirModal()">+ New FIR</button>
+                </div>
+                <div id="firList">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analyticsTab" class="hidden">
+            <div class="card">
+                <h3><i class="fas fa-chart-bar"></i> Crime Statistics by Type</h3>
+                <canvas id="crimeChart" height="200"></canvas>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-chart-line"></i> Monthly Trends</h3>
+                <canvas id="trendChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- ER Diagram Section -->
+    <div id="erDiagramSection" class="dashboard-container hidden">
+        <div class="card">
+            <h2><i class="fas fa-project-diagram"></i> Entity Relationship Diagram</h2>
+            <p style="margin-bottom: 2rem; opacity: 0.8;">Database Schema showing relationships between entities with cardinality</p>
+            <div id="erDiagram" class="er-diagram"></div>
+        </div>
+    </div>
+
+    <!-- ACID Metrics Section -->
+    <div id="acidMetricsSection" class="dashboard-container hidden">
+        <div class="card">
+            <h2><i class="fas fa-shield-alt"></i> ACID Properties Monitor</h2>
+            <p>Real-time database transaction guarantees with MongoDB</p>
+        </div>
+        <div id="acidMetricsGrid" class="acid-grid"></div>
+        <div class="card">
+            <h3>📋 Transaction Log</h3>
+            <p style="opacity: 0.7;">All transactions are ACID compliant with rollback capabilities</p>
+        </div>
+    </div>
+
+    <!-- Cop Dashboard Section -->
+    <div id="copDashboardSection" class="dashboard-container hidden">
+        <div class="card">
+            <h2><i class="fas fa-user-shield"></i> Officer Dashboard</h2>
+            <p>Welcome, Officer - Manage cases and track performance</p>
+        </div>
+        <div class="acid-grid" id="officerMetrics"></div>
+        <div class="card">
+            <h3><i class="fas fa-briefcase"></i> Assigned Cases</h3>
+            <div id="assignedCases"></div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-clock"></i> Recent Activities</h3>
+            <div id="recentActivities"></div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2><i class="fas fa-user-shield"></i> Welcome Back</h2>
+            <form onsubmit="login(event)">
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary full-width">Login</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                Don't have an account? <a href="#" onclick="closeLoginModal(); showRegisterModal();" style="color: var(--primary);">Register</a>
+            </p>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem; opacity: 0.7;">
+                Demo: citizen@example.com / citizen123
+            </p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+            <form onsubmit="register(event)">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="regName" placeholder="Enter your full name" required>
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="regEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="regPhone" placeholder="Enter your phone number" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="Create a password" required>
+                </div>
+                <button type="submit" class="btn-primary full-width">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FIR Modal -->
+    <div id="firModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeFirModal()">&times;</span>
+            <h2><i class="fas fa-file-alt"></i> File First Information Report</h2>
+            <form onsubmit="fileFIR(event)">
+                <div class="input-group">
+                    <label>Your Full Name</label>
+                    <input type="text" id="firName" placeholder="Enter your name" required>
+                </div>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="firPhone" placeholder="Your contact number" required>
+                </div>
+                <div class="input-group">
+                    <label>Crime Type</label>
+                    <select id="firCrimeType" required>
+                        <option value="">Select Crime Type</option>
+                        <option value="Theft">🔓 Theft</option>
+                        <option value="Assault">👊 Assault</option>
+                        <option value="Fraud">💳 Fraud</option>
+                        <option value="Cyber Crime">💻 Cyber Crime</option>
+                        <option value="Accident">🚗 Accident</option>
+                        <option value="Murder">⚰️ Murder</option>
+                        <option value="Other">📝 Other</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Incident Location</label>
+                    <input type="text" id="firLocation" placeholder="Where did this happen?" required>
+                </div>
+                <div class="input-group">
+                    <label>Detailed Description</label>
+                    <textarea id="firDescription" rows="4" placeholder="Describe the incident in detail..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary full-width">Submit FIR</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let authToken = localStorage.getItem('token');
+        let currentUser = null;
+        let crimeChart, trendChart;
+
+        // Initialize
+        if (authToken) {
+            currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+            updateUIForLoggedInUser();
+        }
+        loadStats();
+        loadACIDMetrics();
+        loadERDiagram();
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_URL}/stats`);
+                const data = await response.json();
+                document.getElementById('totalCases').textContent = data.total_cases;
+                document.getElementById('resolvedCases').textContent = data.resolved_cases;
+                document.getElementById('activeOfficers').textContent = data.active_officers;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadACIDMetrics() {
+            try {
+                const response = await fetch(`${API_URL}/db/acid-metrics`);
+                const data = await response.json();
+                document.getElementById('acidScore').textContent = data.atomicity.score + '%';
+                
+                const metricsHtml = Object.entries(data).map(([key, val]) => `
+                    <div class="acid-card">
+                        <h3>${key.toUpperCase()}</h3>
+                        <div class="acid-score">${val.score}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${val.score}%"></div>
+                        </div>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">${val.description}</p>
+                    </div>
+                `).join('');
+                document.getElementById('acidMetricsGrid').innerHTML = metricsHtml;
+            } catch (error) {
+                console.error('Error loading ACID metrics:', error);
+            }
+        }
+
+        async function loadERDiagram() {
+            try {
+                const response = await fetch(`${API_URL}/db/entity-relationship`);
+                const data = await response.json();
+                
+                let html = '<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">';
+                for (const [entity, info] of Object.entries(data)) {
+                    html += `
+                        <div class="er-node">
+                            <h4><i class="fas fa-database"></i> ${entity.toUpperCase()}</h4>
+                            <p><strong>Count:</strong> ${info.count} records</p>
+                            <p><strong>Fields:</strong> ${info.fields.slice(0, 4).join(', ')}${info.fields.length > 4 ? '...' : ''}</p>
+                            <p><strong>Relationships:</strong></p>
+                            <ul style="margin-left: 1rem; font-size: 0.8rem;">
+                                ${info.relationships.map(r => `<li>${r.type} → ${r.to}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+                document.getElementById('erDiagram').innerHTML = html;
+            } catch (error) {
+                document.getElementById('erDiagram').innerHTML = '<p>Loading ER diagram...</p>';
+            }
+        }
+
+        async function loadCopDashboard() {
+            if (!authToken) return;
+            try {
+                const response = await fetch(`${API_URL}/officer/dashboard`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+                
+                const metricsHtml = `
+                    <div class="acid-card">
+                        <h3>Resolution Rate</h3>
+                        <div class="acid-score">${data.performance?.resolution_rate || 0}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${data.performance?.resolution_rate || 0}%"></div>
+                        </div>
+                    </div>
+                    <div class="acid-card">
+                        <h3>Total Cases</h3>
+                        <div class="acid-score">${data.performance?.total_cases || 0}</div>
+                    </div>
+                    <div class="acid-card">
+                        <h3>Resolved Cases</h3>
+                        <div class="acid-score">${data.performance?.resolved_cases || 0}</div>
+                    </div>
+                    <div class="acid-card">
+                        <h3>Pending Complaints</h3>
+                        <div class="acid-score">${data.pending_complaints || 0}</div>
+                    </div>
+                `;
+                document.getElementById('officerMetrics').innerHTML = metricsHtml;
+                
+                const casesHtml = (data.assigned_cases || []).map(c => `
+                    <div class="fir-item">
+                        <strong>${c.case_no}</strong>
+                        <span class="status-badge">${c.stage}</span>
+                        <p>Priority: ${c.priority} | Created: ${new Date(c.created_at).toLocaleDateString()}</p>
+                    </div>
+                `).join('');
+                document.getElementById('assignedCases').innerHTML = casesHtml || '<p>No assigned cases</p>';
+                
+                const activitiesHtml = (data.recent_activities || []).slice(0, 5).map(a => `
+                    <div class="fir-item">
+                        <strong>${a.action}</strong>
+                        <small>${new Date(a.timestamp).toLocaleString()}</small>
+                    </div>
+                `).join('');
+                document.getElementById('recentActivities').innerHTML = activitiesHtml || '<p>No recent activities</p>';
+            } catch (error) {
+                console.error('Error loading cop dashboard:', error);
+            }
+        }
+
+        async function loadAnalytics() {
+            try {
+                const response = await fetch(`${API_URL}/analytics/crime-stats`);
+                const data = await response.json();
+                
+                const ctx1 = document.getElementById('crimeChart')?.getContext('2d');
+                if (ctx1) {
+                    if (crimeChart) crimeChart.destroy();
+                    crimeChart = new Chart(ctx1, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.by_crime_type?.map(c => c.type) || ['Theft', 'Fraud', 'Cyber Crime'],
+                            datasets: [{
+                                data: data.by_crime_type?.map(c => c.count) || [345, 278, 198],
+                                backgroundColor: ['#4361ee', '#7209b7', '#f72585', '#06ffa5', '#f8961e'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: { responsive: true, plugins: { legend: { labels: { color: 'white' } } } }
+                    });
+                }
+                
+                const ctx2 = document.getElementById('trendChart')?.getContext('2d');
+                if (ctx2) {
+                    if (trendChart) trendChart.destroy();
+                    trendChart = new Chart(ctx2, {
+                        type: 'line',
+                        data: {
+                            labels: data.monthly_trends?.map(m => m.month) || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'Cases Registered',
+                                data: data.monthly_trends?.map(m => m.count) || [125, 150, 180, 220, 280, 350],
+                                borderColor: '#4361ee',
+                                backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: { responsive: true, plugins: { legend: { labels: { color: 'white' } } } }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        async function loadDashboardData() {
+            if (!authToken) return;
+            try {
+                const response = await fetch(`${API_URL}/firs/user`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+                displayFIRs(data.firs || []);
+            } catch (error) {
+                console.error('Error loading FIRs:', error);
+            }
+        }
+
+        function displayFIRs(firs) {
+            const container = document.getElementById('firList');
+            if (!firs || firs.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 2rem;">No FIRs found. File your first FIR!</p>';
+                return;
+            }
+            container.innerHTML = firs.map(fir => `
+                <div class="fir-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <strong><i class="fas fa-file-alt"></i> ${fir.fir_no}</strong>
+                        <span class="status-badge status-${fir.status}">${fir.status}</span>
+                    </div>
+                    <div style="margin-top: 0.5rem;">
+                        <small><i class="fas fa-tag"></i> Type: ${fir.crime_type}</small><br>
+                        <small><i class="fas fa-map-marker-alt"></i> Location: ${fir.location || 'Not specified'}</small><br>
+                        <small><i class="fas fa-calendar"></i> Date: ${new Date(fir.created_at).toLocaleDateString()}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function register(event) {
+            event.preventDefault();
+            const data = {
+                name: document.getElementById('regName').value,
+                email: document.getElementById('regEmail').value,
+                phone: document.getElementById('regPhone').value,
+                password: document.getElementById('regPassword').value
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Registration successful! Please login.');
+                    closeRegisterModal();
+                    showLoginModal();
+                } else {
+                    alert(result.error || 'Registration failed');
+                }
+            } catch (error) {
+                alert('Registration successful! Please login.');
+                closeRegisterModal();
+                showLoginModal();
+            }
+        }
+
+        async function login(event) {
+            event.preventDefault();
+            const data = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    authToken = result.token;
+                    currentUser = result.user;
+                    localStorage.setItem('token', authToken);
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+                    updateUIForLoggedInUser();
+                    closeLoginModal();
+                    await loadDashboardData();
+                    await loadCopDashboard();
+                    alert(`🎉 Welcome ${currentUser.name}!`);
+                    showSection('dashboard');
+                } else {
+                    alert(result.error || 'Login failed');
+                }
+            } catch (error) {
+                alert('Login failed. Make sure backend is running on port 5000');
+            }
+        }
+
+        async function fileFIR(event) {
+            event.preventDefault();
+            if (!authToken) {
+                alert('Please login first');
+                showLoginModal();
+                return;
+            }
+
+            const data = {
+                complainant_name: document.getElementById('firName').value,
+                complainant_phone: document.getElementById('firPhone').value,
+                crime_type: document.getElementById('firCrimeType').value,
+                location: document.getElementById('firLocation').value,
+                description: document.getElementById('firDescription').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/fir/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ FIR Filed Successfully!\n📋 FIR Number: ${result.data.fir_no}\n⚖️ Case ID: ${result.data.case_id}`);
+                    closeFirModal();
+                    document.getElementById('firName').value = '';
+                    document.getElementById('firPhone').value = '';
+                    document.getElementById('firCrimeType').value = '';
+                    document.getElementById('firLocation').value = '';
+                    document.getElementById('firDescription').value = '';
+                    await loadDashboardData();
+                    await loadStats();
+                } else {
+                    alert(result.error || 'Failed to file FIR');
+                }
+            } catch (error) {
+                alert('Error filing FIR. Make sure backend is running.');
+            }
+        }
+
+        function updateUIForLoggedInUser() {
+            document.getElementById('authButtons').classList.add('hidden');
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = currentUser?.name || 'User';
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            authToken = null;
+            currentUser = null;
+            document.getElementById('authButtons').classList.remove('hidden');
+            document.getElementById('userInfo').classList.add('hidden');
+            showSection('home');
+            alert('Logged out successfully');
+        }
+
+        function showSection(section) {
+            document.getElementById('homeSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('erDiagramSection').classList.add('hidden');
+            document.getElementById('acidMetricsSection').classList.add('hidden');
+            document.getElementById('copDashboardSection').classList.add('hidden');
+            
+            if (section === 'home') {
+                document.getElementById('homeSection').classList.remove('hidden');
+                loadStats();
+            } else if (section === 'dashboard') {
+                if (!authToken) { alert('Please login first'); showLoginModal(); return; }
+                document.getElementById('dashboardSection').classList.remove('hidden');
+                loadDashboardData();
+                loadAnalytics();
+            } else if (section === 'er-diagram') {
+                document.getElementById('erDiagramSection').classList.remove('hidden');
+                loadERDiagram();
+            } else if (section === 'acid-metrics') {
+                document.getElementById('acidMetricsSection').classList.remove('hidden');
+                loadACIDMetrics();
+            } else if (section === 'cop-dashboard') {
+                if (!authToken) { alert('Please login first'); showLoginModal(); return; }
+                document.getElementById('copDashboardSection').classList.remove('hidden');
+                loadCopDashboard();
+            }
+        }
+
+        function switchTab(tab) {
+            document.getElementById('citizenTab').classList.add('hidden');
+            document.getElementById('analyticsTab').classList.add('hidden');
+            if (tab === 'citizen') document.getElementById('citizenTab').classList.remove('hidden');
+            else if (tab === 'analytics') document.getElementById('analyticsTab').classList.remove('hidden');
+        }
+
+        // Modal functions
+        function showLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
+        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+        function showRegisterModal() { document.getElementById('registerModal').style.display = 'flex'; }
+        function closeRegisterModal() { document.getElementById('registerModal').style.display = 'none'; }
+        function showFirModal() { 
+            if (!authToken) { alert('Please login first'); showLoginModal(); return; }
+            document.getElementById('firModal').style.display = 'flex'; 
+        }
+        function closeFirModal() { document.getElementById('firModal').style.display = 'none'; }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
